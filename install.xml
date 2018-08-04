@@ -1,0 +1,477 @@
+<?xml version="1.0"?>
+<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
+<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+	<id>sologhost:BoardIcons</id>
+	<version>1.0</version>
+
+	<!--
+		Board Icon Mod created by SoLoGHoST!
+	-->
+	<file name="$sourcedir/Subs-Boards.php">
+		<operation>
+			<search position="after"><![CDATA[// Do the updates (if any).]]></search>
+			<add><![CDATA[// New Boards Type and Image
+	if (isset($boardOptions['new_img_type']))
+	{
+		$boardUpdates[] = 'img_new_type = {string:new_img_type}';
+		$boardUpdateParameters['new_img_type'] = $boardOptions['new_img_type'];
+	}
+
+	if (isset($boardOptions['new_img']))
+	{
+		$boardUpdates[] = 'img_new = {string:new_img}';
+		$boardUpdateParameters['new_img'] = $boardOptions['new_img'];
+	}
+
+	// No New Boards Type and Image
+	if (isset($boardOptions['no_new_img_type']))
+	{
+		$boardUpdates[] = 'img_old_type = {string:no_new_img_type}';
+		$boardUpdateParameters['no_new_img_type'] = $boardOptions['no_new_img_type'];
+	}
+	
+	if (isset($boardOptions['no_new_img']))
+	{
+		$boardUpdates[] = 'img_old = {string:no_new_img}';
+		$boardUpdateParameters['no_new_img'] = $boardOptions['no_new_img'];
+	}
+	
+	// Redirect Boards Type and Image
+	if (isset($boardOptions['redirect_img_type']))
+	{
+		$boardUpdates[] = 'img_redirect_type = {string:redirect_img_type}';
+		$boardUpdateParameters['redirect_img_type'] = $boardOptions['redirect_img_type'];
+	}
+	
+	if (isset($boardOptions['redirect_img']))
+	{
+		$boardUpdates[] = 'img_redirect = {string:redirect_img}';
+		$boardUpdateParameters['redirect_img'] = $boardOptions['redirect_img'];
+	}
+
+	]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[// Getting all the board and category information you'd ever wanted.
+	$request = $smcFunc['db_query']('', '
+		SELECT]]></search>
+			<add><![CDATA[
+			b.img_new, b.img_old, b.img_redirect, b.img_new_type, b.img_old_type, b.img_redirect_type,]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[$boards[$row['id_board']] = array(]]></search>
+			<add><![CDATA[
+				'new_img' => $row['img_new'],
+				'new_img_type' => $row['img_new_type'],
+				'no_new_img' => $row['img_old'],
+				'no_new_img_type' => $row['img_old_type'],
+				'redirect_img' => $row['img_redirect'],
+				'redirect_img_type' => $row['img_redirect_type'],]]></add>
+		</operation>
+	</file>
+	
+	<file name="$sourcedir/ManageBoards.php">
+		<operation>
+			<search position="before"><![CDATA[$context['board'] = array(]]></search>
+			<add><![CDATA[
+			'new_img' => '',
+			'new_img_type' => 0,
+			'no_new_img' => '',
+			'no_new_img_type' => 0,
+			'redirect_img' => '',
+			'redirect_img_type' => 0,]]></add>
+		</operation>
+		<operation>
+			<search position="after"><![CDATA[// We need to know what used to be case in terms of redirection.]]></search>
+			<add><![CDATA[//
+		// Board Icons Mod Begin...
+		//
+
+		global $boarddir, $settings;
+
+		// Get the types...
+		$new_img_type = (int) $_POST['new_img_select'];
+		$no_new_img_type = (int) $_POST['no_new_img_select'];
+		$redirect_img_type = (int) $_POST['redirect_img_select'];
+
+		$boardOptions['new_img_type'] = !empty($new_img_type) ? $new_img_type : 0;
+		$boardOptions['no_new_img_type'] = !empty($no_new_img_type) ? $no_new_img_type : 0;
+		$boardOptions['redirect_img_type'] = !empty($redirect_img_type) ? $redirect_img_type : 0;
+
+		$search_opts = array(
+			1 => $boarddir,
+			3 => $settings['default_theme_dir'], 
+			4 => $settings['theme_dir'],
+		);
+
+		/*
+			Types are as follows:
+			0 (default) = http:// (not checking)
+			1 = $boardurl (check $boarddir)
+			2 = $scripturl (not checking)
+			3 = $settings['default_theme_url'] (is checking... $settings['default_theme_dir'])
+			4 = $settings['theme_url'] (is checking... $settings['theme_dir'])
+		*/
+
+		// Trimming away the slashes that aren't needed, just in case.
+		$_POST['new_img'] = (string) trim($_POST['new_img'], '/');
+		$_POST['no_new_img'] = (string) trim($_POST['no_new_img'], '/');
+		$_POST['redirect_img'] = (string) trim($_POST['redirect_img'], '/');
+
+		// No need for http://
+		if (substr(strtolower($_POST['new_img']), 0, 7) == 'http://')
+			$_POST['new_img'] = substr($_POST['new_img'], 7);
+
+		if (substr(strtolower($_POST['no_new_img']), 0, 7) == 'http://')
+			$_POST['no_new_img'] = substr($_POST['no_new_img'], 7);
+
+		if (substr(strtolower($_POST['redirect_img']), 0, 7) == 'http://')
+			$_POST['redirect_img'] = substr($_POST['redirect_img'], 7);
+
+		if (isset($search_opts[$boardOptions['new_img_type']]))
+			$boardOptions['new_img'] = $_POST['new_img'] !== '' && file_exists($search_opts[$boardOptions['new_img_type']] . '/' . $_POST['new_img']) && !is_dir($search_opts[$boardOptions['new_img_type']] . '/' . $_POST['new_img']) ? $_POST['new_img'] : '';
+		else
+			$boardOptions['new_img'] = $_POST['new_img'] !== '' ? $_POST['new_img'] : '';
+
+		if (isset($search_opts[$boardOptions['no_new_img_type']]))
+			$boardOptions['no_new_img'] = $_POST['no_new_img'] !== '' && file_exists($search_opts[$boardOptions['no_new_img_type']] . '/' .  $_POST['no_new_img']) && !is_dir($search_opts[$boardOptions['no_new_img_type']] . '/' .  $_POST['no_new_img']) ? $_POST['no_new_img'] : '';
+		else
+			$boardOptions['no_new_img'] = $_POST['no_new_img'] !== '' ? $_POST['no_new_img'] : '';
+
+		if (isset($search_opts[$boardOptions['redirect_img_type']]))
+			$boardOptions['redirect_img'] = $_POST['redirect_img'] !== '' && file_exists($search_opts[$boardOptions['redirect_img_type']] . '/' . $_POST['redirect_img']) && !is_dir($search_opts[$boardOptions['redirect_img_type']] . '/' . $_POST['redirect_img']) ? $_POST['redirect_img'] : '';
+		else
+			$boardOptions['redirect_img'] = $_POST['redirect_img'] !== '' ? $_POST['redirect_img'] : '';
+
+		//
+		// Board Icons Mod END!
+		//
+
+		]]></add>
+		</operation>
+	</file>
+	
+	<file name="$sourcedir/Subs-BoardIndex.php">
+		<operation>
+			<search position="before"><![CDATA[b.id_board, b.name AS board_name, b.description,]]></search>
+			<add><![CDATA[
+			b.img_new, b.img_new_type, b.img_old, b.img_old_type, b.img_redirect, b.img_redirect_type,]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[$this_category[$row_board['id_board']] = array(]]></search>
+			<add><![CDATA[
+					'new_img' => $row_board['img_new'] !== '' ? BoardIconUrl($row_board['img_new_type'], $row_board['img_new']) : '',
+					'no_new_img' => $row_board['img_old'] !== '' ? BoardIconUrl($row_board['img_old_type'], $row_board['img_old']) : '',
+					'redirect_img' => $row_board['img_redirect'] !== '' ? BoardIconUrl($row_board['img_redirect_type'], $row_board['img_redirect']) : '',]]></add>
+		</operation>
+		<operation>
+			<search position="before"><![CDATA[$this_category[$row_board['id_parent']]['children'][$row_board['id_board']] = array(]]></search>
+			<add><![CDATA[
+				'new_img' => $row_board['img_new'] !== '' ? BoardIconUrl($row_board['img_new_type'], $row_board['img_new']) : '',
+				'no_new_img' => $row_board['img_old'] !== '' ? BoardIconUrl($row_board['img_old_type'], $row_board['img_old']) : '',
+				'redirect_img' => $row_board['img_redirect'] !== '' ? BoardIconUrl($row_board['img_redirect_type'], $row_board['img_redirect']) : '',]]></add>
+		</operation>
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+// Board Icons Mod...
+function BoardIconUrl($type = 0, $url = '')
+{
+	global $boardurl, $settings, $scripturl;
+	
+	// Fix the URL if there are issues with it... (remove http:// at the beginning ofcourse)
+	if (substr(strtolower($url), 0, 7) == 'http://')
+		$url = substr($url, 7);
+	
+	$url = trim($url, '/');
+	if(empty($url)) return '';
+
+	$final_url = '';
+	
+	switch ($type)
+	{
+		case 1:
+			$final_url = $boardurl . '/' . $url;
+			break;
+		case 2:
+			$final_url = $scripturl . $url;
+			break;
+		case 3:
+			$final_url = $settings['default_theme_url'] . '/' . $url;
+			break;
+		case 4:
+			$final_url = $settings['theme_url'] . '/' . $url;
+			break;
+		default: // 0 = http://
+			$final_url = 'http://' . $url;
+			break;
+	}
+	
+	return $final_url;
+}
+]]></add>
+		</operation>
+	</file>
+
+	<file name="$themedir/ManageBoards.template.php">
+		<operation>
+			<search position="before"><![CDATA[<dd>
+							<textarea name="desc" rows="3" cols="35" style="' . ($context['browser']['is_ie8'] ? 'width: 635px; max-width: 99%; min-width: 99%' : 'width: 99%') . ';">', $context['board']['description'], '</textarea>
+						</dd>]]></search>
+			<add><![CDATA[
+						<dt>
+							<strong>', $txt['boardIcons_noNewPostsPath'], '</strong>
+							<select name="no_new_img_select" class="smalltext floatright">
+								<option value="0"', (empty($context['board']['no_new_img_type']) ? ' selected="selected"' : ''), '>', $txt['boardIcons_select_http'], '</option>
+								<option value="1"', ($context['board']['no_new_img_type'] == 1 ? ' selected="selected"' : ''), '>', $txt['boardIcons_select_boardurl'], '</option>
+								<option value="2"', ($context['board']['no_new_img_type'] == 2 ? ' selected="selected"' : ''), '>', $txt['boardIcons_select_scripturl'], '</option>
+								<option value="3"', ($context['board']['no_new_img_type'] == 3 ? ' selected="selected"' : ''), '>', $txt['boardIcons_select_default_theme'], '</option>
+								<option value="4"', ($context['board']['no_new_img_type'] == 4 ? ' selected="selected"' : ''), '>', $txt['boardIcons_select_theme'], '</option>
+							</select><br />
+							<span class="smalltext">', $txt['boardIcons_manage_caption'], '</span>
+						</dt>
+						<dd>
+							<input type="text" name="no_new_img" id="new_posts_img" value="', $context['board']['no_new_img'], '" class="input_text" style="width: 95%;" />
+						</dd>
+						<dt>
+							<strong>', $txt['boardIcons_newPostsPath'], '</strong>
+							<select name="new_img_select" class="smalltext floatright">
+								<option value="0"', (empty($context['board']['new_img_type']) ? ' selected="selected"' : ''), '>', $txt['boardIcons_select_http'], '</option>
+								<option value="1"', ($context['board']['new_img_type'] == 1 ? ' selected="selected"' : ''), '>', $txt['boardIcons_select_boardurl'], '</option>
+								<option value="2"', ($context['board']['new_img_type'] == 2 ? ' selected="selected"' : ''), '>', $txt['boardIcons_select_scripturl'], '</option>
+								<option value="3"', ($context['board']['new_img_type'] == 3 ? ' selected="selected"' : ''), '>', $txt['boardIcons_select_default_theme'], '</option>
+								<option value="4"', ($context['board']['new_img_type'] == 4 ? ' selected="selected"' : ''), '>', $txt['boardIcons_select_theme'], '</option>
+							</select><br />
+							<span class="smalltext">', $txt['boardIcons_manage_caption'], '</span>
+						</dt>
+						<dd>
+							<input type="text" name="new_img" value="', $context['board']['new_img'], '" class="input_text" style="width: 95%;" />
+						</dd>
+						<dt>
+							<strong>', $txt['boardIcons_redirectPostsPath'], '</strong> 
+							<select name="redirect_img_select" class="smalltext floatright">
+								<option value="0"', (empty($context['board']['redirect_img_type']) ? ' selected="selected"' : ''), '>', $txt['boardIcons_select_http'], '</option>
+								<option value="1"', ($context['board']['redirect_img_type'] == 1 ? ' selected="selected"' : ''), '>', $txt['boardIcons_select_boardurl'], '</option>
+								<option value="2"', ($context['board']['redirect_img_type'] == 2 ? ' selected="selected"' : ''), '>', $txt['boardIcons_select_scripturl'], '</option>
+								<option value="3"', ($context['board']['redirect_img_type'] == 3 ? ' selected="selected"' : ''), '>', $txt['boardIcons_select_default_theme'], '</option>
+								<option value="4"', ($context['board']['redirect_img_type'] == 4 ? ' selected="selected"' : ''), '>', $txt['boardIcons_select_theme'], '</option>
+							</select><br />
+							<span class="smalltext">', $txt['boardIcons_manage_caption'], '</span>
+						</dt>
+						<dd>
+							<input type="text" name="redirect_img" id="new_posts_img" value="', $context['board']['redirect_img'], '" class="input_text" style="width: 95%;" />
+						</dd>]]></add>
+		</operation>
+	</file>
+	
+	<file name="$themedir/BoardIndex.template.php">
+		<operation error="ignore">
+			<search position="replace"><![CDATA[// If the board or children is new, show an indicator.
+				if ($board['new'] || $board['children_new'])
+					echo '
+							<img src="', $settings['images_url'], '/', $context['theme_variant_url'], 'on', $board['new'] ? '' : '2', '.png" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" />';
+				// Is it a redirection board?
+				elseif ($board['is_redirect'])
+					echo '
+							<img src="', $settings['images_url'], '/', $context['theme_variant_url'], 'redirect.png" alt="*" title="*" />';
+				// No new posts at all! The agony!!
+				else
+					echo '
+							<img src="', $settings['images_url'], '/', $context['theme_variant_url'], 'off.png" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';]]></search>
+			<add><![CDATA[// If the board or children is new, show an indicator.
+				if ($board['new'] || $board['children_new'])
+				{
+					if ($board['new_img'] !== '')
+						echo '
+								<img src="', $board['new_img'], '" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" />';
+					else
+						echo '
+								<img src="', $settings['images_url'], '/', $context['theme_variant_url'], 'on', $board['new'] ? '' : '2', '.png" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" />';
+				}
+				// Is it a redirection board?
+				elseif ($board['is_redirect'])
+				{
+					if ($board['redirect_img'] !== '')
+						echo '
+								<img src="', $board['redirect_img'], '" alt="*" title="*" />';
+					else
+						echo '
+								<img src="', $settings['images_url'], '/', $context['theme_variant_url'], 'redirect.png" alt="*" title="*" />';
+				}
+				// No new posts at all! The agony!!
+				else
+				{
+					if ($board['no_new_img'] !== '')
+						echo '
+								<img src="', $board['no_new_img'], '" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';
+					else
+						echo '
+								<img src="', $settings['images_url'], '/', $context['theme_variant_url'], 'off.png" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';
+				}]]></add>
+		</operation>
+		<!--// CORE TEMPLATE EDIT //-->
+		<operation error="ignore">
+			<search position="replace"><![CDATA[// If the board or children is new, show an indicator.
+				if ($board['new'] || $board['children_new'])
+					echo '
+						<img src="', $settings['images_url'], '/on', $board['new'] ? '' : '2', '.gif" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" border="0" />';
+				// Is it a redirection board?
+				elseif ($board['is_redirect'])
+					echo '
+						<img src="', $settings['images_url'], '/redirect.gif" alt="*" title="*" border="0" />';
+				// No new posts at all! The agony!!
+				else
+					echo '
+						<img src="', $settings['images_url'], '/off.gif" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';]]></search>
+			<add><![CDATA[// If the board or children is new, show an indicator.
+				if ($board['new'] || $board['children_new'])
+				{
+					if ($board['new_img'] !== '')
+						echo '
+								<img src="', $board['new_img'], '" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" border="0" />';
+					else
+						echo '
+								<img src="', $settings['images_url'], '/on', $board['new'] ? '' : '2', '.gif" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" border="0" />';
+				}
+				// Is it a redirection board?
+				elseif ($board['is_redirect'])
+				{
+					if ($board['redirect_img'] !== '')
+						echo '
+								<img src="', $board['redirect_img'], '" alt="*" title="*" border="0" />';
+					else
+						echo '
+								<img src="', $settings['images_url'], '/redirect.gif" alt="*" title="*" border="0" />';
+				}
+				// No new posts at all! The agony!!
+				else
+				{
+					if ($board['no_new_img'] !== '')
+						echo '
+								<img src="', $board['no_new_img'], '" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';
+					else
+						echo '
+								<img src="', $settings['images_url'], '/off.gif" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';
+				}]]></add>
+		</operation>
+	</file>
+	
+	<file name="$themedir/MessageIndex.template.php">
+		<operation error="ignore">
+			<search position="replace"><![CDATA[// If the board or children is new, show an indicator.
+			if ($board['new'] || $board['children_new'])
+				echo '
+							<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'on', $board['new'] ? '' : '2', '.png" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" />';
+			// Is it a redirection board?
+			elseif ($board['is_redirect'])
+				echo '
+							<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'redirect.png" alt="*" title="*" />';
+			// No new posts at all! The agony!!
+			else
+				echo '
+							<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'off.png" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';]]></search>
+			<add><![CDATA[// If the board or children is new, show an indicator.
+			if ($board['new'] || $board['children_new'])
+			{
+				if ($board['new_img'] !== '')
+					echo '
+							<img src="', $board['new_img'], '" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" />';
+				else
+					echo '
+							<img src="', $settings['images_url'], '/', $context['theme_variant_url'], 'on', $board['new'] ? '' : '2', '.png" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" />';
+			}
+			// Is it a redirection board?
+			elseif ($board['is_redirect'])
+			{
+				if ($board['redirect_img'] !== '')
+					echo '
+							<img src="', $board['redirect_img'], '" alt="*" title="*" />';
+				else
+					echo '
+							<img src="', $settings['images_url'], '/', $context['theme_variant_url'], 'redirect.png" alt="*" title="*" />';
+			}
+			// No new posts at all! The agony!!
+			else
+			{
+				if ($board['no_new_img'] !== '')
+					echo '
+							<img src="', $board['no_new_img'], '" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';
+				else
+					echo '
+							<img src="', $settings['images_url'], '/', $context['theme_variant_url'], 'off.png" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';
+			}]]></add>
+		</operation>
+		<!--// CORE TEMPLATE EDIT //-->
+		<operation error="ignore">
+			<search position="replace"><![CDATA[// If the board or children is new, show an indicator.
+			if ($board['new'] || $board['children_new'])
+				echo '
+					<img src="', $settings['images_url'], '/on', $board['new'] ? '' : '2', '.gif" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" border="0" />';
+			// Is it a redirection board?
+			elseif ($board['is_redirect'])
+				echo '
+					<img src="', $settings['images_url'], '/redirect.gif" alt="*" title="*" border="0" />';
+			// No new posts at all! The agony!!
+			else
+				echo '
+					<img src="', $settings['images_url'], '/off.gif" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';]]></search>
+			<add><![CDATA[// If the board or children is new, show an indicator.
+			if ($board['new'] || $board['children_new'])
+			{
+				if ($board['new_img'] !== '')
+					echo '
+							<img src="', $board['new_img'], '" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" border="0" />';
+				else
+					echo '
+							<img src="', $settings['images_url'], '/on', $board['new'] ? '' : '2', '.gif" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" border="0" />';
+			}
+			// Is it a redirection board?
+			elseif ($board['is_redirect'])
+			{
+				if ($board['redirect_img'] !== '')
+					echo '
+							<img src="', $board['redirect_img'], '" alt="*" title="*" border="0" />';
+				else
+					echo '
+							<img src="', $settings['images_url'], '/redirect.gif" alt="*" title="*" border="0" />';
+			}
+			// No new posts at all! The agony!!
+			else
+			{
+				if ($board['no_new_img'] !== '')
+					echo '
+							<img src="', $board['no_new_img'], '" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';
+				else
+					echo '
+							<img src="', $settings['images_url'], '/off.gif" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';
+			}]]></add>
+		</operation>
+	</file>
+	<file name="$languagedir/Modifications.english.php">
+		<operation>
+			<search position="end" />
+			<add><![CDATA[
+//
+// Board Icons MOD Begin...
+//
+
+$txt['boardIcons_newPostsPath'] = 'New Posts Image Path: ';
+$txt['boardIcons_noNewPostsPath'] = 'No New Posts Image Path: ';
+$txt['boardIcons_redirectPostsPath'] = 'Redirect Image Path: ';
+$txt['boardIcons_manage_caption'] = 'Leave blank for the default image.';
+
+// Filepath Selection Choices...
+$txt['boardIcons_select_http'] = 'http://';
+$txt['boardIcons_select_boardurl'] = '{$boardurl}';
+$txt['boardIcons_select_scripturl'] = '{$scripturl}';
+$txt['boardIcons_select_default_theme'] = 'Default Theme';
+$txt['boardIcons_select_theme'] = 'This Theme';
+
+//
+// Board Icons MOD END!
+//
+]]></add>
+		</operation>
+	</file>
+	
+</modification>

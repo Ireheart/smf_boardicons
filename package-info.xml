@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<!DOCTYPE package-info SYSTEM "http://www.simplemachines.org/xml/package-info">
+
+<package-info xmlns="http://www.simplemachines.org/xml/package-info" xmlns:smf="http://www.simplemachines.org/">
+	<id>sologhost:BoardIcons</id>
+	<name>Board Icons</name>
+	<version>1.0</version>
+
+	<type>modification</type>
+	
+	<install for="2.0 - 2.99.99">
+		<redirect url="?action=admin;area=maintain;sa=routine;activity=cleancache" timeout="15000">install_readme.txt</redirect> 
+		<readme type="file" parsebbc="true">readme.bbc</readme>
+		<modification type="file">install.xml</modification>
+		<database>BoardIconsInstall.php</database>
+	</install>
+	<uninstall for="2.0 - 2.99.99">
+		<readme type="file" parsebbc="true">remove.bbc</readme>
+		<modification type="file" reverse="true">install.xml</modification>
+		<database>BoardIconsUninstall.php</database>
+	</uninstall>
+</package-info>

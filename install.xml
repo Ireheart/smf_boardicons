@@ -1,11 +1,11 @@
 <?xml version="1.0"?>
-<!DOCTYPE modification SYSTEM "http://www.simplemachines.org/xml/modification">
-<modification xmlns="http://www.simplemachines.org/xml/modification" xmlns:smf="http://www.simplemachines.org/">
+<!DOCTYPE modification SYSTEM "https://www.simplemachines.org/xml/modification">
+<modification xmlns="https://www.simplemachines.org/xml/modification" xmlns:smf="https://www.simplemachines.org/">
 	<id>sologhost:BoardIcons</id>
 	<version>1.0</version>
 
 	<!--
-		Board Icon Mod created by SoLoGHoST!
+		Board Icon Mod created by SoLoGHoST! & Ireheart (2018)
 	-->
 	<file name="$sourcedir/Subs-Boards.php">
 		<operation>
@@ -106,7 +106,7 @@
 
 		/*
 			Types are as follows:
-			0 (default) = http:// (not checking)
+			0 (default) = https:// (not checking)
 			1 = $boardurl (check $boarddir)
 			2 = $scripturl (not checking)
 			3 = $settings['default_theme_url'] (is checking... $settings['default_theme_dir'])
@@ -118,14 +118,14 @@
 		$_POST['no_new_img'] = (string) trim($_POST['no_new_img'], '/');
 		$_POST['redirect_img'] = (string) trim($_POST['redirect_img'], '/');
 
-		// No need for http://
-		if (substr(strtolower($_POST['new_img']), 0, 7) == 'http://')
+		// No need for https://
+		if (substr(strtolower($_POST['new_img']), 0, 7) == 'https://')
 			$_POST['new_img'] = substr($_POST['new_img'], 7);
 
-		if (substr(strtolower($_POST['no_new_img']), 0, 7) == 'http://')
+		if (substr(strtolower($_POST['no_new_img']), 0, 7) == 'https://')
 			$_POST['no_new_img'] = substr($_POST['no_new_img'], 7);
 
-		if (substr(strtolower($_POST['redirect_img']), 0, 7) == 'http://')
+		if (substr(strtolower($_POST['redirect_img']), 0, 7) == 'https://')
 			$_POST['redirect_img'] = substr($_POST['redirect_img'], 7);
 
 		if (isset($search_opts[$boardOptions['new_img_type']]))
@@ -179,8 +179,8 @@ function BoardIconUrl($type = 0, $url = '')
 {
 	global $boardurl, $settings, $scripturl;
 	
-	// Fix the URL if there are issues with it... (remove http:// at the beginning ofcourse)
-	if (substr(strtolower($url), 0, 7) == 'http://')
+	// Fix the URL if there are issues with it... (remove https:// at the beginning ofcourse)
+	if (substr(strtolower($url), 0, 7) == 'https://')
 		$url = substr($url, 7);
 	
 	$url = trim($url, '/');
@@ -202,8 +202,8 @@ function BoardIconUrl($type = 0, $url = '')
 		case 4:
 			$final_url = $settings['theme_url'] . '/' . $url;
 			break;
-		default: // 0 = http://
-			$final_url = 'http://' . $url;
+		default: // 0 = https://
+			$final_url = 'https://' . $url;
 			break;
 	}
 	
@@ -461,7 +461,7 @@ $txt['boardIcons_redirectPostsPath'] = 'Redirect Image Path: ';
 $txt['boardIcons_manage_caption'] = 'Leave blank for the default image.';
 
 // Filepath Selection Choices...
-$txt['boardIcons_select_http'] = 'http://';
+$txt['boardIcons_select_http'] = 'https://';
 $txt['boardIcons_select_boardurl'] = '{$boardurl}';
 $txt['boardIcons_select_scripturl'] = '{$scripturl}';
 $txt['boardIcons_select_default_theme'] = 'Default Theme';

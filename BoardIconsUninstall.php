@@ -1,19 +1,17 @@
 <?php
 /**************************************************************************************
 * Board Icons																		  *
-* Version 1.0				                                                          *
-***************************************************************************************
-* By: SoLoGHoST																		  *
-* http://dream-portal.net		                                                      *
-* Copyright 2011 Solomon Closson													  *
+* Version 1.1				                                                          *
+***************************************************************************************												
+* https://github.com/Ireheart	                                                      *
+* Copyright 2011 Solomon Closson and Ireheart 2018									  *
 * =================================================================================== *
 * License Information:																  *
 * 	- ABOVE INFO MUST REMAIN INTACT!												  *
 *	- You are not allowed to redistribute any modifications to this mod.			  *
 *	- You are FREE to redistribute this package "AS IS" ONLY						  *
 *		granted all of the information for this mod stays INTACT!					  *
-* =================================================================================== *
-* BoardIconsUninstall.php									                              *
+* BoardIconsUninstall.php									                          *
 **************************************************************************************/
 
 if (file_exists(dirname(__FILE__) . '/SSI.php'))

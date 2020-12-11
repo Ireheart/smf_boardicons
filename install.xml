@@ -314,15 +314,15 @@ function BoardIconUrl($type = 0, $url = '')
 			<search position="replace"><![CDATA[// If the board or children is new, show an indicator.
 				if ($board['new'] || $board['children_new'])
 					echo '
-						<img src="', $settings['images_url'], '/on', $board['new'] ? '' : '2', '.gif" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" border="0" />';
+						<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'on', $board['new'] ? '' : '2', '.png" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" />';
 				// Is it a redirection board?
 				elseif ($board['is_redirect'])
 					echo '
-						<img src="', $settings['images_url'], '/redirect.gif" alt="*" title="*" border="0" />';
+						<img src="', $settings['<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'redirect.png" alt="*" title="*" />';
 				// No new posts at all! The agony!!
 				else
 					echo '
-						<img src="', $settings['images_url'], '/off.gif" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';]]></search>
+						<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'off.png" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';]]></search>
 			<add><![CDATA[// If the board or children is new, show an indicator.
 				if ($board['new'] || $board['children_new'])
 				{
@@ -331,7 +331,7 @@ function BoardIconUrl($type = 0, $url = '')
 								<img src="', $board['new_img'], '" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" border="0" />';
 					else
 						echo '
-								<img src="', $settings['images_url'], '/on', $board['new'] ? '' : '2', '.gif" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" border="0" />';
+								<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'on', $board['new'] ? '' : '2', '.png" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" />';
 				}
 				// Is it a redirection board?
 				elseif ($board['is_redirect'])
@@ -341,7 +341,7 @@ function BoardIconUrl($type = 0, $url = '')
 								<img src="', $board['redirect_img'], '" alt="*" title="*" border="0" />';
 					else
 						echo '
-								<img src="', $settings['images_url'], '/redirect.gif" alt="*" title="*" border="0" />';
+								<img src="', $settings['<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'redirect.png" alt="*" title="*" />';
 				}
 				// No new posts at all! The agony!!
 				else
@@ -351,7 +351,7 @@ function BoardIconUrl($type = 0, $url = '')
 								<img src="', $board['no_new_img'], '" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';
 					else
 						echo '
-								<img src="', $settings['images_url'], '/off.gif" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';
+								<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'off.png" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';
 				}]]></add>
 		</operation>
 	</file>
@@ -365,7 +365,7 @@ function BoardIconUrl($type = 0, $url = '')
 			// Is it a redirection board?
 			elseif ($board['is_redirect'])
 				echo '
-							<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'redirect.png" alt="*" title="*" />';
+							<img src="', $settings['<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'redirect.png" alt="*" title="*" />';
 			// No new posts at all! The agony!!
 			else
 				echo '
@@ -406,15 +406,15 @@ function BoardIconUrl($type = 0, $url = '')
 			<search position="replace"><![CDATA[// If the board or children is new, show an indicator.
 			if ($board['new'] || $board['children_new'])
 				echo '
-					<img src="', $settings['images_url'], '/on', $board['new'] ? '' : '2', '.gif" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" border="0" />';
+					<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'on', $board['new'] ? '' : '2', '.png" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" />';
 			// Is it a redirection board?
 			elseif ($board['is_redirect'])
 				echo '
-					<img src="', $settings['images_url'], '/redirect.gif" alt="*" title="*" border="0" />';
+					<img src="', $settings['<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'redirect.png" alt="*" title="*" />';
 			// No new posts at all! The agony!!
 			else
 				echo '
-					<img src="', $settings['images_url'], '/off.gif" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';]]></search>
+					<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'off.png" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';]]></search>
 			<add><![CDATA[// If the board or children is new, show an indicator.
 			if ($board['new'] || $board['children_new'])
 			{
@@ -423,7 +423,7 @@ function BoardIconUrl($type = 0, $url = '')
 							<img src="', $board['new_img'], '" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" border="0" />';
 				else
 					echo '
-							<img src="', $settings['images_url'], '/on', $board['new'] ? '' : '2', '.gif" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" border="0" />';
+							<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'on', $board['new'] ? '' : '2', '.png" alt="', $txt['new_posts'], '" title="', $txt['new_posts'], '" />';
 			}
 			// Is it a redirection board?
 			elseif ($board['is_redirect'])
@@ -433,7 +433,7 @@ function BoardIconUrl($type = 0, $url = '')
 							<img src="', $board['redirect_img'], '" alt="*" title="*" border="0" />';
 				else
 					echo '
-							<img src="', $settings['images_url'], '/redirect.gif" alt="*" title="*" border="0" />';
+							<img src="', $settings['<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'redirect.png" alt="*" title="*" />';
 			}
 			// No new posts at all! The agony!!
 			else
@@ -443,7 +443,7 @@ function BoardIconUrl($type = 0, $url = '')
 							<img src="', $board['no_new_img'], '" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';
 				else
 					echo '
-							<img src="', $settings['images_url'], '/off.gif" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';
+							<img src="', $settings['images_url'], '/' .$context['theme_variant_url'], 'off.png" alt="', $txt['old_posts'], '" title="', $txt['old_posts'], '" />';
 			}]]></add>
 		</operation>
 	</file>
